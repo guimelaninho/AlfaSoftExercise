@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ContactFilter;
+use App\Http\Requests\UserFilter;
 use App\Models\Contact;
+use App\Models\User;
 use Illuminate\Database\Eloquent\MassAssignmentException;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 
-class ContactController extends Controller
+class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -20,19 +22,19 @@ class ContactController extends Controller
 
     public function setData()
     {
-        $data['pageName'] = "Contatos";
-        $data['route'] = "contacts";
+        $data['pageName'] = "Usuários";
+        $data['route'] = "users";
 
         return $data;
     }
+
     public function index()
     {
         $data = $this->setData();
         $data['action'] = 'create';
         $data['pageFunction'] = "Listar";
-        $data['entity'] = Contact::all();
-        return view('contacts.index', compact('data'));
-
+        $data['entity'] = User::all();
+        return view('users.index', compact('data'));
     }
 
     /**
@@ -45,7 +47,7 @@ class ContactController extends Controller
         $data = $this->setData();
         $data['action'] = 'store';
         $data['pageFunction'] = "Criar";
-        return view('contacts.form',compact('data'));
+        return view('users.form', compact('data'));
     }
 
     /**
@@ -54,13 +56,13 @@ class ContactController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(ContactFilter $request)
+    public function store(UserFilter $request)
     {
         try {
-           $data = $request->only(['name', 'contact','email']);
-
-            DB::beginTransaction();
-            $insert = Contact::create($data);
+            $data = $request->only(['name', 'password', 'email']);
+            $data['password'] = Hash::make($data['password']);
+           // DB::beginTransaction();
+            $insert = User::create($data);
         } catch (QueryException $exception) {
             DB::rollBack();
             Log::critical($exception->getMessage());
@@ -75,7 +77,7 @@ class ContactController extends Controller
             ]);
         } finally {
             DB::commit();
-            return redirect()->route('contacts.index');
+            return redirect()->route('users.index');
         }
         return redirect()->back()->withErrors('msg', $exception->getMessage());
     }
@@ -91,8 +93,8 @@ class ContactController extends Controller
         $data = $this->setData();
         $data['action'] = 'show';
         $data['pageFunction'] = "Ver";
-        $data['entity'] = Contact::find($id);
-        return view('contacts.form',compact('data'));
+        $data['entity'] = User::find($id);
+        return view('users.form', compact('data'));
     }
 
     /**
@@ -106,8 +108,8 @@ class ContactController extends Controller
         $data = $this->setData();
         $data['action'] = 'edit';
         $data['pageFunction'] = "Editar";
-        $data['entity'] = Contact::find($id);
-        return view('contacts.form',compact('data'));
+        $data['entity'] = User::find($id);
+        return view('users.form', compact('data'));
     }
 
     /**
@@ -117,30 +119,30 @@ class ContactController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(ContactFilter $request, $id)
+    public function update(UserFilter $request, $id)
     {
         try {
-            $data = $request->only(['name', 'contact','email']);
- 
-             DB::beginTransaction();
-             Contact::find($id)->update($data);
-         } catch (QueryException $exception) {
-             DB::rollBack();
-             Log::critical($exception->getMessage());
-         } catch (MassAssignmentException $exception) {
-             DB::rollBack();
-             Log::critical($exception->getMessage());
-         } catch (\TypeError $exception) {
-             DB::rollBack();
-             Log::critical($exception->getMessage());
-             return response()->json([
-                 $exception->getMessage()
-             ]);
-         } finally {
-             DB::commit();
-             return redirect()->route('contacts.index');
-         }
-         return redirect()->back()->withErrors('msg', $exception->getMessage());
+            $data = $request->only(['name', 'contact', 'email']);
+            $data['password'] = Hash::make($data['password']);
+            DB::beginTransaction();
+            User::find($id)->update($data);
+        } catch (QueryException $exception) {
+            DB::rollBack();
+            Log::critical($exception->getMessage());
+        } catch (MassAssignmentException $exception) {
+            DB::rollBack();
+            Log::critical($exception->getMessage());
+        } catch (\TypeError $exception) {
+            DB::rollBack();
+            Log::critical($exception->getMessage());
+            return response()->json([
+                $exception->getMessage()
+            ]);
+        } finally {
+            DB::commit();
+            return redirect()->route('users.index');
+        }
+        return redirect()->back()->withErrors('msg', $exception->getMessage());
     }
 
     /**
@@ -152,25 +154,25 @@ class ContactController extends Controller
     public function destroy($id)
     {
         try {
- 
-             DB::beginTransaction();
-             Contact::destroy($id);
-         } catch (QueryException $exception) {
-             DB::rollBack();
-             Log::critical($exception->getMessage());
-         } catch (MassAssignmentException $exception) {
-             DB::rollBack();
-             Log::critical($exception->getMessage());
-         } catch (\TypeError $exception) {
-             DB::rollBack();
-             Log::critical($exception->getMessage());
-             return response()->json([
-                 $exception->getMessage()
-             ]);
-         } finally {
-             DB::commit();
-             return redirect()->route('contacts.index');
-         }
-         return redirect()->back()->withErrors('msg', $exception->getMessage());
+
+            DB::beginTransaction();
+            User::destroy($id);
+        } catch (QueryException $exception) {
+            DB::rollBack();
+            Log::critical($exception->getMessage());
+        } catch (MassAssignmentException $exception) {
+            DB::rollBack();
+            Log::critical($exception->getMessage());
+        } catch (\TypeError $exception) {
+            DB::rollBack();
+            Log::critical($exception->getMessage());
+            return response()->json([
+                $exception->getMessage()
+            ]);
+        } finally {
+            DB::commit();
+            return redirect()->route('users.index');
+        }
+        return redirect()->back()->withErrors('msg', $exception->getMessage());
     }
 }
