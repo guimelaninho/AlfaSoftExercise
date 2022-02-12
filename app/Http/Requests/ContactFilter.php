@@ -25,7 +25,7 @@ class ContactFilter extends FormRequest
     {
         return [
             'name' => 'required|min:5|max:70|unique:contacts,name',
-            'contact' => 'required|min:9|max:9|unique:contacts,contact',
+            'contact' => 'required|min:9|numeric|unique:contacts,contact',
             'email' => 'required|min:10|max:90|unique:contacts,email|email',
         ];
     }
