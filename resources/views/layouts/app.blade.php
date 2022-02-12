@@ -32,7 +32,7 @@
     <div class="min-h-screen bg-gray-100">
         @include('layouts.navigation')
         <main>
-            <div class="container d-fex e flex-wrap">
+            <div class="container parent flex-wrap">
                 <div class="container-fluid">
                     <div class="fade-in">
                         <div class="row">

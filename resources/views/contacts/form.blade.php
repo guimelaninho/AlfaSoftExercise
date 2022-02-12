@@ -11,7 +11,6 @@
     $disabled = ($data['action'] == 'show') ? "disabled" : null;
 
 @endphp
-a
 @section('content')
   {{-- Tag <form> --}}
     @if($data['action'] == 'store')
