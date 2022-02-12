@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ContactFilter;
+use App\Http\Requests\ContactsUpdateFilter;
 use App\Models\Contact;
 use Illuminate\Database\Eloquent\MassAssignmentException;
 use Illuminate\Database\QueryException;
@@ -117,7 +118,7 @@ class ContactController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(ContactFilter $request, $id)
+    public function update(ContactsUpdateFilter $request, $id)
     {
         try {
             $data = $request->only(['name', 'contact','email']);

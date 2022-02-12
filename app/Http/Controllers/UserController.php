@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UserFilter;
+use App\Http\Requests\UserUpdateFilter;
 use App\Models\Contact;
 use App\Models\User;
 use Illuminate\Database\Eloquent\MassAssignmentException;
@@ -61,7 +62,7 @@ class UserController extends Controller
         try {
             $data = $request->only(['name', 'password', 'email']);
             $data['password'] = Hash::make($data['password']);
-           // DB::beginTransaction();
+            DB::beginTransaction();
             $insert = User::create($data);
         } catch (QueryException $exception) {
             DB::rollBack();
@@ -119,10 +120,10 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UserFilter $request, $id)
+    public function update(UserUpdateFilter $request, $id)
     {
         try {
-            $data = $request->only(['name', 'contact', 'email']);
+            $data = $request->only(['name', 'paswword', 'email']);
             $data['password'] = Hash::make($data['password']);
             DB::beginTransaction();
             User::find($id)->update($data);
